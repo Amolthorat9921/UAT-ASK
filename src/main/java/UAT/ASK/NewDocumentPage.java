@@ -10,8 +10,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import Pagefactory.utility;
-import net.bytebuddy.asm.MemberSubstitution.FieldValue;
-
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -55,7 +53,7 @@ public class NewDocumentPage extends utility
 	@FindBy(xpath = "(//*[contains(text(), 'TEST')]/ancestor::li/ins[@class='jstree-icon'])[2]")
 	WebElement IconPlusDrawer;
 
-	@FindBy(linkText = "QA UAT") // SalesReportPDF
+	@FindBy(linkText = "UAT-270324-PHASE-I") // SalesReportPDF
 	WebElement FolderNamePDF;
 
 	@FindBy(xpath = "//input[@id='tableFilter']")
@@ -121,7 +119,8 @@ public class NewDocumentPage extends utility
 
 	public void pdf() throws IOException 
 	{
-		FileInputStream fis = new FileInputStream(System.getProperty("user.dir") + "\\data\\Pan_Card.xlsx");
+		//FileInputStream fis = new FileInputStream(System.getProperty("user.dir") + "\\data\\Pan_Card.xlsx");
+		FileInputStream fis = new FileInputStream("D:\\ALL GIT PROJETS\\UAT-ASK\\Data\\Pan_Card.xlsx");
 		XSSFWorkbook wb = new XSSFWorkbook(fis);
 
 		XSSFSheet sheet = wb.getSheet("Sheet2");
@@ -136,28 +135,58 @@ public class NewDocumentPage extends utility
 		a.doubleClick(FolderNamePDF).perform();
 		SubMenuCreateNewDocument.click();
 		utility.Dropdownbytxt(ddDocumenttype, "PMS");
-		utility.isInvisible(txtClientCodePMS, wd, 10);
-		txtClientCodePMS.sendKeys("Test PDF Doc");
-		utility.Dropdownbytxt(txtProductPMS, "Pan");
-		utility.Dropdownbyindex(txtRelationshipManagerPMS, 3);
-		utility.Dropdownbyindex(txtIntermediaryPMS, 3);
-		utility.Dropdownbytxt(txtDocumentPMS, "KYC - PAN"); //KYC - PAN, KYC - Other PAN, KYC - Other Proofs
+		utility.isVisible(txtClientCodePMS, wd, 10);
+		//txtClientCodePMS.sendKeys("Test PDF Doc");
+		txtProductPMS.sendKeys("Pan");
+		//utility.Dropdownbytxt(txtProductPMS, "Pan");
+		txtRelationshipManagerPMS.sendKeys("Vinayak");
+		//utility.Dropdownbyindex(txtRelationshipManagerPMS, 3);
+		txtIntermediaryPMS.sendKeys("Abc");
+		//utility.Dropdownbyindex(txtIntermediaryPMS, 3);
+		txtDocumentPMS.clear();
+		txtDocumentPMS.sendKeys("KYC-PAN-PHASE-II");
+		//utility.Dropdownbytxt(txtDocumentPMS, "KYC - PAN"); //KYC - PAN, KYC - Other PAN, KYC - Other Proofs
 		
-		if (chkRetain.isSelected()) 
-		{
-
-		} else 
-		{
-			chkRetain.click();
-		}	System.out.println("No of Record Found Into Excel :- " + rowCount);
+//		if (chkRetain.isSelected()) 
+//		{
+//			txtProductPMS.sendKeys("Pan");
+//			//utility.Dropdownbytxt(txtProductPMS, "Pan");
+//			txtRelationshipManagerPMS.sendKeys("Vinayak");
+//			//utility.Dropdownbyindex(txtRelationshipManagerPMS, 3);
+//			txtIntermediaryPMS.sendKeys("Abc");
+//			//utility.Dropdownbyindex(txtIntermediaryPMS, 3);
+//			txtDocumentPMS.clear();
+//			txtDocumentPMS.sendKeys("KYC-PAN-PHASE-II");
+//		} else 
+//		{
+//			chkRetain.click();
+//		}	System.out.println("No of Record Found Into Excel :- " + rowCount);
 
 		for (int i = 1; i <= rowCount; i++) 
 		{
+			
+			if (chkRetain.isSelected()) 
+			{
+				txtProductPMS.sendKeys("Pan");
+				//utility.Dropdownbytxt(txtProductPMS, "Pan");
+				txtRelationshipManagerPMS.sendKeys("Vinayak");
+				//utility.Dropdownbyindex(txtRelationshipManagerPMS, 3);
+				txtIntermediaryPMS.sendKeys("Abc");
+				//utility.Dropdownbyindex(txtIntermediaryPMS, 3);
+				txtDocumentPMS.clear();
+				
+			//	txtDocumentPMS.sendKeys("KYC - PAN");
+				txtDocumentPMS.sendKeys(sheet.getRow(i).getCell(1).getStringCellValue());
+			} else 
+			{
+				chkRetain.click();
+			}
+			
 			try {
 				Thread.sleep(2000);
 				utility.isDisaplyedW(SubMenuNwdocument, wd, 10);
 				a.moveToElement(SubMenuNwdocument).perform();
-				System.out.println(sheet.getRow(i).getCell(0).getStringCellValue());
+			//	System.out.println(sheet.getRow(i).getCell(0).getStringCellValue());
 				UploadNewFile.sendKeys(sheet.getRow(i).getCell(0).getStringCellValue());
 
 				Thread.sleep(2000);
@@ -171,9 +200,10 @@ public class NewDocumentPage extends utility
 
 				}
 
-				utility.isVisible(txtCompanyName, wd, 15);
-				txtCompanyName.clear();
-				txtCompanyName.sendKeys(sheet.getRow(i).getCell(1).getStringCellValue());
+				utility.isVisible(txtClientCodePMS, wd, 15);
+				txtClientCodePMS.clear();
+				//enter client code client name from xls 
+				txtClientCodePMS.sendKeys(sheet.getRow(i).getCell(1).getStringCellValue());
 
 				btnCreateDocument.click();
 				Thread.sleep(3000);
@@ -183,7 +213,7 @@ public class NewDocumentPage extends utility
 
 				XSSFRow row = sheet.getRow(i);
 				XSSFCell cell = row.createCell(2);
-				FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir") + "\\data\\Pan_Card.xlsx");
+				FileOutputStream fos = new FileOutputStream("D:\\ALL GIT PROJETS\\UAT-ASK\\Data\\Pan_Card_New.xlsx");
 
 				if (FileUploadStatusMsg.contains("Document created successfully")) 
 				{
